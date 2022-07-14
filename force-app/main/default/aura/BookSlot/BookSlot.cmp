@@ -1,0 +1,107 @@
+<aura:component controller="BookSlotClass" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="app" type="Book_Slot__c" default="{'sobjectType':'Book_Slot__c', 
+                                                            'Name': '',
+                                                            'Date__c': '',
+                                                            'Time__c': '',
+                                                            'Contact__c':''
+                                                            }"/>
+    
+    
+    <aura:attribute name="timeslots" type="list" />
+    <aura:attribute name="duration" type="Integer" default='15'/>
+    <aura:attribute name="visibility" type="Boolean" default="true" required="false" />
+    <aura:attribute name="endTimeVisiblity" type="Boolean" default="true" required="false" />    
+    <aura:attribute name="today" type="Date" />
+    <aura:attribute name="stime" type="Time" />
+    <aura:attribute name="etime" type="Time" />
+    <aura:attribute name="minEnd" type="Time" default="v.stime" />
+    <aura:attribute name="fieldMap" type="Map"/>
+    
+    
+    
+    <!--Declare Handler-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    
+    <!--Component Start-->
+    <div class=" slds-box slds-theme_default">
+        
+        <div class="container-fluid">
+            <div class="form-group slds-p-vertical_xx-small">
+                <c:lookupField 
+                               objectAPIName="Contact" 
+                               label="Contact"
+                               returnFields="['Name']" 
+                               queryFields="['Name']"
+                               selectedId="{!v.app.Contact__c}"
+                               showAddNew='true'
+                                filter="CreatedDate > 2001-01-01T00:00:01Z"
+                               
+                               />
+            </div>
+            
+            <div class="form-group slds-p-vertical_xx-small">
+                <lightning:input name="Name" type="text" label="Appointment Name" value="{!v.app.Name}" />
+            </div>
+            
+            
+            
+            <div class="form-group slds-grid slds-wrap slds-p-vertical_xx-small">
+                <div class="slds-size_1-of-2">
+                    <div class="slds-box slds-box_x-small slds-m-right_x-small">
+                        <lightning:input type="Time"
+                                         aura:id="StartSlots"
+                                         name="Start Time"
+                                         label="Start Time" value="{!v.stime}"
+                                         max="16:45" 
+                                         onchange="{! c.setEndTimeSlots }" 
+                                         />
+                    </div>
+                </div>
+                <div class="slds-size_1-of-2">
+                    <div class="slds-box slds-box_x-small slds-m-left_x-small">
+                        <lightning:input type="Time"
+                                         aura:id="EndSlots"
+                                         name="End Time"
+                                         label="End Time" value="{!v.etime}"
+                                         max="19:00"
+                                         disabled="{!v.endTimeVisiblity }"
+                                         onchange="{! c.GetTimeSlot }" 
+                                         />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-form-element slds-p-vertical_xx-small">
+                <lightning:input type="checkbox" aura:id="boxPack"   label="Other Date" onchange="{! c.handleChange }"  />                                  
+                
+            </div>
+            
+            <div class="form-group slds-p-vertical_xx-small">
+                <lightning:input name="Date"  min="{!v.today}" type="Date"    label="Date"   disabled="{!v.visibility }" value="{!v.app.Date__c}" onchange="{!c.GetTimeSlot}"/>    
+            </div>
+        </div>
+        
+        <div class="form-group slds-grid slds-wrap slds-p-vertical_xx-small">
+            
+            <lightning:buttonGroup class=" slds-button_full-width">
+                
+                <lightning:button class="slds-button_stretch" aura:id="btn1" label="15 Min" onclick="{!c.Min15}"/>
+                <lightning:button class="slds-button_stretch" aura:id="btn2" label="30 Min" onclick="{!c.Min30}"/>
+                <lightning:button class="slds-button_stretch" aura:id="btn3" label="45 Min" onclick="{!c.Min45}"/>
+                <lightning:button class="slds-button_stretch" aura:id="btn4" label="60 Min" onclick="{!c.Min60}"/>
+            </lightning:buttonGroup>  
+        </div>
+        
+        <div class="form-group slds-p-top_xx-small slds-p-bottom_small">
+            <lightning:select aura:id="timePicklist"  value="{!v.app.Time__c}"  name="Time Slot" label="Time Slot">
+                <option value="">--None--</option>
+                <aura:iteration items="{!v.fieldMap}" var="i" indexVar="key">
+                            <option text="{!i.value}" value="{!i.key}" selected="{!i.key==v.app.Time__c}" />
+                </aura:iteration>
+            </lightning:select>
+        </div>
+        
+        
+        <lightning:button variant="brand" label="Book" onclick="{!c.BookSlot}" />   
+    </div>
+</aura:component>
