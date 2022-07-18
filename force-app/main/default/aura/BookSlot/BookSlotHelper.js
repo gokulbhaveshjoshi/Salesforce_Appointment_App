@@ -155,7 +155,9 @@
         else{
             ampm = ' AM'
         }
-        
+        if(hour>12){
+            hour = hour %12;
+        }
         if(mins == 0){
             return hour + ':' + mins+'0' + ampm;
         }

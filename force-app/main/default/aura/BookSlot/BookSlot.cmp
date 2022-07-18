@@ -83,7 +83,7 @@
         
         <div class="form-group slds-grid slds-wrap slds-p-vertical_xx-small">
             
-            <lightning:buttonGroup class=" slds-button_full-width">
+            <lightning:buttonGroup class="slds-button_full-width">
                 
                 <lightning:button class="slds-button_stretch" aura:id="btn1" label="15 Min" onclick="{!c.Min15}"/>
                 <lightning:button class="slds-button_stretch" aura:id="btn2" label="30 Min" onclick="{!c.Min30}"/>
