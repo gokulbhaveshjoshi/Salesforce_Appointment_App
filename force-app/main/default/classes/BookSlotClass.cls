@@ -5,12 +5,13 @@ public class BookSlotClass {
         return timeChange;
     }
     
-    @AuraEnabled
-    public static  Map<Time, Time> getTimeSlot(Date dt, Integer minute, String stime, String etime){
+    @AuraEnabled(cacheable=true)
+    public static  Map<Time, Time> getTimeSlot(date dt, Integer minute, String stime, String etime){
         system.debug(dt);
         Time slotstarttime = stringToTime(stime);
         Time slotendtime = stringToTime(etime);
-       
+       	System.debug(slotstarttime);
+        System.debug(slotendtime);
         
         Map<Time, Time> options = new Map<Time, Time>();
         Date searchDate = Date.valueOf(dt);
@@ -78,12 +79,13 @@ public class BookSlotClass {
             }
             myTime = myTime.addMinutes(15);
         }
+        System.debug(options);
         return options;
     }
     
-    @AuraEnabled 
-    Public static void CreateAppointment(Book_Slot__c app, Integer duration){
-        
+    @AuraEnabled
+    Public static void CreateAppointment( Book_Slot__c app, Integer duration){
+        System.debug(app);
         Time t1 = app.Time__c;
         //system.debug(t1);
         //Time t = Time.newInstance(t1.hour(), t1.minute(), t1.second(), 0);
@@ -107,5 +109,19 @@ public class BookSlotClass {
             System.debug(e.getLineNumber());
         }
         
+    }
+     @AuraEnabled
+    public static void CreateAppointment2(Book_Slot__c app,  Integer duration){
+        if(app==null){
+            System.debug('null ');
+            return;
+        }
+        Book_Slot__c bc = new Book_Slot__c();
+        bc.name = app.Name;
+        bc.Time__c = app.Time__c;
+        bc.Date__c = app.Date__c;
+        CreateAppointment(bc, duration);
+        //insert bc;
+        System.debug(app);
     }
 }
