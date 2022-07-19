@@ -1,7 +1,11 @@
 import { api, LightningElement, track } from 'lwc';
 import getTimeSlot from '@salesforce/apex/BookSlotClass.getTimeSlot';
+import CreateAppointment from '@salesforce/apex/BookSlotClass.CreateAppointment2';
+import timeApi from '@salesforce/schema/Book_Slot__c.Time__c';
+import nameApi from '@salesforce/schema/Book_Slot__c.Name';
+import dateApi from '@salesforce/schema/Book_Slot__c.Date__c';
 export default class BookSlotLWC extends LightningElement {
-    @track appointmentName = 'Bhavesh Joshi';
+    @track appointmentName ;
     @track endTimeVisibility = true;
     @track otherDateDisabled = true;
     @track selectedDate ;
@@ -9,8 +13,16 @@ export default class BookSlotLWC extends LightningElement {
     @api startTimeMin;
     @api endTimeMin;
     timeslots = null;
-
-    
+    @track btn15Color = 'brand-outline';
+    @track btn30Color = 'brand';
+    @track btn45Color = 'brand';
+    @track btn60Color = 'brand';
+    @track loading = false;
+    @track appointment={
+        Name: nameApi,
+        Date__c: dateApi,
+        Time__c: timeApi
+    };
     
     constructor() {
         super();
@@ -21,6 +33,9 @@ export default class BookSlotLWC extends LightningElement {
         this.selectedDate = time.toISOString();
     }
 
+    get expression() {
+        return this.loading ? true : false;
+    }
 
     get availableTimeSlots(){
         if(this.timeslots==null){
@@ -36,7 +51,21 @@ export default class BookSlotLWC extends LightningElement {
     book(event){
         //this.appointmentName = event.target.value;
         this.appointmentName = this.template.querySelector(".appName").value;
-        console.log(this.appointmentName);
+        this.appointment.Name = this.appointmentName;
+        this.appointment.Date__c = this.selectedDate;
+        this.appointment.Time__c = this.template.querySelector(".selectSlots").value;
+        console.table(this.appointment);
+        CreateAppointment({
+            app: this.appointment,
+            duration: this.duration
+        }).then((result) => {
+            console.log('check response', result);
+            alert("Your appointment is book");
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+        //console.log(this.appointmentName);
     }
 
     getCurrentTime(){
@@ -56,6 +85,7 @@ export default class BookSlotLWC extends LightningElement {
         if(eventName==="endTime"){
             //this.endTimeMin = event.target.value;
             console.log("event", event.target.name);
+            this.getAvailableSlots();
         }
 
         if(eventName==="otherDateCB"){
@@ -77,7 +107,6 @@ export default class BookSlotLWC extends LightningElement {
             this.selectedDate = event.target.value;
             this.startTimeMin = "10:00:00";
             this.endTimeMin = this.addToMintute("10:00:00");
-            console.log(this.selectedDate);
         }
         
     }
@@ -86,7 +115,7 @@ export default class BookSlotLWC extends LightningElement {
         let btnName = event.target.name;
         if(btnName==="btn15"){
             this.duration = 15;
-            this.changeButtonColor()
+            
             //return;
         }
         if(btnName==="btn30"){
@@ -101,7 +130,7 @@ export default class BookSlotLWC extends LightningElement {
             this.duration = 60;
             //return;
         }
-
+        this.changeButtonColor();
         this.getAvailableSlots();
 
     }
@@ -150,7 +179,7 @@ export default class BookSlotLWC extends LightningElement {
         console.log(this.duration);
         console.log(startTime);
         console.log(endTime);
-        
+        this.loading = true;
         getTimeSlot(
             {
                 dt: this.selectedDate ,
@@ -171,7 +200,7 @@ export default class BookSlotLWC extends LightningElement {
         .catch((error) => {
             console.log(error);
         });
-
+        this.loading = false;
     }
 
     mstoTime(s){
@@ -200,8 +229,9 @@ export default class BookSlotLWC extends LightningElement {
     }
 
     changeButtonColor(){
-        if(duration==15){
-            this.template.querySelector('.btn15').setAttribute('variant', 'brand' );
-        }
+        this.btn15Color = this.duration==15?'brand-outline':'brand';
+        this.btn30Color = this.duration==30?'brand-outline':'brand';
+        this.btn45Color = this.duration==45?'brand-outline':'brand';
+        this.btn60Color = this.duration==60?'brand-outline':'brand';
     }
 }

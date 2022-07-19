@@ -1,47 +1,62 @@
 <template>
-    <p> Hello</p>
-    <div class=" slds-box slds-theme_default">
+    <div if:true={expression}>elements</div>
+    <div if:false={expression}>
+        <div class=" slds-box slds-theme_default">
 
-        <div class="form-group slds-p-vertical_xx-small">
-            <lightning-input type="text" class="appName" id="appName" label="Appointment Name" value={appointmentName} placeholder="Your name" >
-            </lightning-input>
-        </div>
+            <div class="form-group slds-p-vertical_xx-small">
+                <lightning-input type="text" class="appName" id="appName" label="Appointment Name"
+                    value={appointmentName} placeholder="Your name">
+                </lightning-input>
+            </div>
 
-        <div class="form-group slds-grid slds-wrap slds-p-vertical_xx-small">
-            <div class="slds-size_1-of-2">
-                <div class="slds-box slds-box_x-small slds-m-right_x-small">
-                    <lightning-input id="startTime" class="startTime" name="startTime" type="time" label="Start Time" min={startTimeMin} max="20:45" onchange={handleChanges}></lightning-input>
+            <div class="form-group slds-grid slds-wrap slds-p-vertical_xx-small">
+                <div class="slds-size_1-of-2">
+                    <div class="slds-box slds-box_x-small slds-m-right_x-small">
+                        <lightning-input id="startTime" class="startTime" name="startTime" type="time"
+                            label="Start Time" min={startTimeMin} max="20:45" onchange={handleChanges}>
+                        </lightning-input>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-2">
+                    <div class="slds-box slds-box_x-small slds-m-right_x-small">
+                        <lightning-input id="endTime" class="endTime" name="endTime" type="time" min={endTimeMin}
+                            label="End Time" disabled={endTimeVisibility} max="19:00" onchange={handleChanges}>
+                        </lightning-input>
+                    </div>
                 </div>
             </div>
-            <div class="slds-size_1-of-2">
-                <div class="slds-box slds-box_x-small slds-m-right_x-small">
-                    <lightning-input id="endTime" class="endTime" name="endTime" type="time" min={endTimeMin} label="End Time" disabled={endTimeVisibility} max="19:00" onchange={handleChanges}></lightning-input>
-                </div>
+
+
+            <div class="slds-form-element slds-p-vertical_xx-small">
+                <lightning-input type="checkbox" name="otherDateCB" label="Other Date" onchange={handleChanges}>
+                </lightning-input>
             </div>
+
+            <div class="form-group slds-p-vertical_xx-small">
+                <lightning-input name="Date" type="date" value={selectedDate} class="otherDate" label="Date"
+                    disabled={otherDateDisabled} onchange={handleChanges}></lightning-input>
+            </div>
+
+            <div class=" slds-p-vertical_small">
+                <lightning-button-group class="slds-align_absolute-center">
+                    <lightning-button variant={btn15Color} onclick={handleDuration} name="btn15" label="15 Min">
+                    </lightning-button>
+                    <lightning-button variant={btn30Color} onclick={handleDuration} name="btn30" label="30 Min">
+                    </lightning-button>
+                    <lightning-button variant={btn45Color} onclick={handleDuration} name="btn45" label="45 Min">
+                    </lightning-button>
+                    <lightning-button variant={btn60Color} onclick={handleDuration} name="btn60" label="60 Min">
+                    </lightning-button>
+                </lightning-button-group>
+            </div>
+
+            <div class="form-group  slds-p-bottom_small">
+                <lightning-combobox class="selectSlots" name="selectSlots" options={availableTimeSlots} value={value}
+                    onchange={handleChanges}></lightning-combobox>
+            </div>
+
+            <lightning-button class="slds-button  slds-button_stretch" variant="brand" label="Book" onclick={book}>
+            </lightning-button>
         </div>
-
-
-        <div class="slds-form-element slds-p-vertical_xx-small">
-            <lightning-input type="checkbox" name="otherDateCB" label="Other Date" onchange={handleChanges}></lightning-input>
-        </div>
-
-        <div class="form-group slds-p-vertical_xx-small">
-            <lightning-input name="Date" type="date" value={selectedDate} class="otherDate"  label="date" disabled={otherDateDisabled} onchange={handleChanges}></lightning-input>
-        </div>
-
-        <div class=" slds-p-vertical_xx-small">
-            <lightning-button-group >
-                <lightning-button class="btn15" variant="brand-outline"  onclick={handleDuration} name="btn15" label="15 Min"></lightning-button>
-                <lightning-button variant="brand" onclick={handleDuration} name="btn30" label="30 Min"></lightning-button>
-                <lightning-button variant="brand"  onclick={handleDuration} name="btn45" label="45 Min"></lightning-button>
-                <lightning-button variant="brand"  onclick={handleDuration} name="btn60" label="60 Min"></lightning-button>
-            </lightning-button-group>
-        </div>
-
-        <div class="form-group slds-p-top_xx-small slds-p-bottom_small">
-            <lightning-combobox name="selectSlots" options={availableTimeSlots} value={value} onchange={handleChanges}></lightning-combobox>
-        </div>
-
-        <lightning-button class="slds-button  slds-button_stretch" variant="brand" label="Book" onclick={book}></lightning-button>
     </div>
 </template>
